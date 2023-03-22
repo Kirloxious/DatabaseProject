@@ -3,12 +3,12 @@
 CREATE TABLE IF NOT EXISTS HotelChain(
 NumberOfHotels int Check (NumberOfHotels >= 0),
 HotelChainID int Not Null Auto_Increment, 
-CentralOfficeAddress varchar(50),
+CentralOfficeAddress varchar(200),
 Primary Key (HotelChainId) 
 );
 CREATE TABLE IF NOT EXISTS HotelChainPhoneNumber(
 HotelChainID int Not Null,
-PhoneNumber int Not Null,
+PhoneNumber VarChar(50) Not Null,
 Foreign Key (HotelChainID) References HotelChain(HotelChainID) ON DELETE CASCADE,
 Primary Key (HotelChainID, PhoneNumber)
 );
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Hotel(
 HotelChainID int Not Null, 
 NumberOfRooms int Check (NumberOfRooms > 0),
 StarRating int(1) Check (StarRating > 0 AND StarRating < 6),
-Address varchar(50),
+Address varchar(200),
 ContactEmail varchar(50),
 HotelID int Not Null Auto_Increment,
 Primary Key (HotelID),
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS Room(
 HotelID int Not Null,
 RoomNumber int Not Null,
 Price Decimal(10,2) Check (Price > 0),
-Capactiy int Check (Capactiy > 0),
+Capacity int Check (Capacity > 0),
 View Varchar(50) Check (View in ("Mountain", "Sea")),
 Extentable bool Not Null,
 Foreign Key (HotelID) References Hotel(HotelID) ON DELETE CASCADE,

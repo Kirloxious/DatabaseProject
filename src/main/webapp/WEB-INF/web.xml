@@ -9,8 +9,4 @@
     <welcome-file>default.jsp</welcome-file>
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
-<!--   <servlet>
-  	<servlet-name>test servlet</servlet-name>
-  	<servlet-class>database.project.TestServlet</servlet-class>
-  </servlet> -->
 </web-app>
