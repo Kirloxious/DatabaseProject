@@ -1,3 +1,18 @@
 {
-    "maven.view": "flat"
+    "maven.view": "flat",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "local instance",
+            "database": "assign2",
+            "username": "root",
+            "password": "rootlogin123"
+        }
+    ]
 }
