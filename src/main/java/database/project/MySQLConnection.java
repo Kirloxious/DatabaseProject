@@ -1,3 +1,5 @@
+package database.project;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,14 +18,13 @@ public class MySQLConnection {
     String sql;
 	
 	public MySQLConnection() {
+		
 	}
 	
-	public void getConnection() {
+	public void getConn() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			db = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/e-hotels", "root", "rootlogin123");
-			System.out.println("Connected to MySQL server");
-			
 		}catch (SQLException e){
             System.out.println("Error in connecting to MySQL server");
             e.printStackTrace();
@@ -50,8 +51,5 @@ public class MySQLConnection {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-}
-	
-	public static void main(String[] args) {
 	}
 }
