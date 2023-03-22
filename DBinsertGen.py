@@ -11,14 +11,19 @@ fake = Faker()
 
 #HotelChain
 HotelChainInsert = "INSERT INTO HotelChain(NumberOfHotels, HotelChainID, CentralOfficeAddress)"
+HotelChainPhoneNumberInsert = "INSERT INTO HotelChainPhoneNumber(HotelChainID, PhoneNumber)"
+HotelChainEmailInsert = "INSERT INTO HotelChain(HotelChainID, Email)"
 
 #Hotel
 HotelInsert = "INSERT INTO Hotel(HotelChainID, NumberOfRooms, StarRating, Address, ContactEmail, HotelID)"
-
+HotelPhoneNumberInsert = "INSERT INTO HotelPhoneNumber(HotelID, PhoneNumber)"
 
 #Room
 RoomInsert = "INSERT INTO Room(HotelID, RoomNumber, Price, Capacity, View, Extentable)" 
+RoomProblemsInsert = "INSERT INTO RoomProblems(HotelID, RoomNumber, Problem)" 
+RoomAmenitiesInsert = "INSERT INTO RoomAmenities(HotelID, RoomNumber, Amenetie)" 
 
+Amenities = ["Bed", "Mini-Fridge", "Kitchen", "Chair", ""]
 
 def randomChar(char_num):
        return ''.join(random.choice(string.ascii_letters) for _ in range(char_num))
@@ -39,11 +44,28 @@ def genPhone():
 def genHotelChain(ID):
     return HotelChainInsert+" VALUES ({}, {}, '{}');".format(8, ID, fake.address())
 
+def genHotelChainPhoneNumber(ID):
+    return HotelChainPhoneNumberInsert+" VALUES ({}, '{}')".format(ID, genPhone())
+
+def genHotelChainEmail(ID):
+    return HotelChainPhoneNumberInsert+" VALUES ({}, '{}')".format(ID, randomEmail())
+
+
 def genHotel(HotelChainID, ID):
     return HotelInsert+" VALUES ({}, {}, {}, '{}', '{}', {});".format(HotelChainID, 5, random.randrange(1, 6), fake.address(), randomEmail(), ID)
 
+def genHotelPhoneNumber(ID):
+    return HotelPhoneNumberInsert+" VALUES ({}, '{}')".format(ID, genPhone())
+
+
 def genRoom(HotelID, roomNbr):
     return RoomInsert+" VALUES ({}, {}, {}, {}, '{}', {});".format(HotelID, roomNbr, round(random.uniform(200,1500), 2), random.randrange(6), random.choice(['Mountain', 'Sea']), bool(random.getrandbits(1)))
+
+def genRoomProblem(HotelID, roomNbr):
+    return RoomInsert+" VALUES ({}, {}, '{}');".format(HotelID, roomNbr, )
+
+def genRoomAmenetie(HotelID, roomNbr):
+    return RoomInsert+" VALUES ({}, {}, '{}');".format(HotelID, roomNbr, )
 
 
 f = open("dbInserts.sql", "x")
