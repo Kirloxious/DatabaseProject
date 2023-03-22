@@ -12,7 +12,7 @@ fake = Faker()
 #HotelChain
 HotelChainInsert = "INSERT INTO HotelChain(NumberOfHotels, HotelChainID, CentralOfficeAddress)"
 HotelChainPhoneNumberInsert = "INSERT INTO HotelChainPhoneNumber(HotelChainID, PhoneNumber)"
-HotelChainEmailInsert = "INSERT INTO HotelChain(HotelChainID, Email)"
+HotelChainEmailInsert = "INSERT INTO HotelChainEmail(HotelChainID, Email)"
 
 #Hotel
 HotelInsert = "INSERT INTO Hotel(HotelChainID, NumberOfRooms, StarRating, Address, ContactEmail, HotelID)"
@@ -23,7 +23,8 @@ RoomInsert = "INSERT INTO Room(HotelID, RoomNumber, Price, Capacity, View, Exten
 RoomProblemsInsert = "INSERT INTO RoomProblems(HotelID, RoomNumber, Problem)" 
 RoomAmenitiesInsert = "INSERT INTO RoomAmenities(HotelID, RoomNumber, Amenetie)" 
 
-Amenities = ["Bed", "Mini-Fridge", "Kitchen", "Chair", ""]
+Amenities = ["Mini-Fridge", "Kitchen", "Wifi", "TV", "In-room coffee machine", "Desk", "Balcony"]
+Problems = ["Broken toilet", "Leaky Ceiling", "Former Crime Scene", "Cracked window", "No balcony railings"]
 
 def randomChar(char_num):
        return ''.join(random.choice(string.ascii_letters) for _ in range(char_num))
@@ -45,37 +46,43 @@ def genHotelChain(ID):
     return HotelChainInsert+" VALUES ({}, {}, '{}');".format(8, ID, fake.address())
 
 def genHotelChainPhoneNumber(ID):
-    return HotelChainPhoneNumberInsert+" VALUES ({}, '{}')".format(ID, genPhone())
+    return HotelChainPhoneNumberInsert+" VALUES ({}, '{}');".format(ID, genPhone())
 
 def genHotelChainEmail(ID):
-    return HotelChainPhoneNumberInsert+" VALUES ({}, '{}')".format(ID, randomEmail())
+    return HotelChainEmailInsert+" VALUES ({}, '{}');".format(ID, randomEmail())
 
 
 def genHotel(HotelChainID, ID):
     return HotelInsert+" VALUES ({}, {}, {}, '{}', '{}', {});".format(HotelChainID, 5, random.randrange(1, 6), fake.address(), randomEmail(), ID)
 
 def genHotelPhoneNumber(ID):
-    return HotelPhoneNumberInsert+" VALUES ({}, '{}')".format(ID, genPhone())
+    return HotelPhoneNumberInsert+" VALUES ({}, '{}');".format(ID, genPhone())
 
 
 def genRoom(HotelID, roomNbr):
-    return RoomInsert+" VALUES ({}, {}, {}, {}, '{}', {});".format(HotelID, roomNbr, round(random.uniform(200,1500), 2), random.randrange(6), random.choice(['Mountain', 'Sea']), bool(random.getrandbits(1)))
+    return RoomInsert+" VALUES ({}, {}, {}, {}, '{}', {});".format(HotelID, roomNbr, round(random.uniform(200,1500), 2), random.randrange(1,6), random.choice(['Mountain', 'Sea']), bool(random.getrandbits(1)))
 
 def genRoomProblem(HotelID, roomNbr):
-    return RoomInsert+" VALUES ({}, {}, '{}');".format(HotelID, roomNbr, )
+    return RoomProblemsInsert+" VALUES ({}, {}, '{}');".format(HotelID, roomNbr, random.choice(Problems))
 
 def genRoomAmenetie(HotelID, roomNbr):
-    return RoomInsert+" VALUES ({}, {}, '{}');".format(HotelID, roomNbr, )
+    return RoomAmenitiesInsert+" VALUES ({}, {}, '{}');".format(HotelID, roomNbr, random.choice(Amenities))
 
 
 f = open("dbInserts.sql", "x")
 
 for i in range(1,6):
-    HCid = 100+i
+    HCid = i
     f.write(genHotelChain(HCid)+"\n")
+    f.write(genHotelChainPhoneNumber(HCid)+"\n")
+    f.write(genHotelChainEmail(HCid)+"\n")
     for j in range(1, 9):
-        Hid = 1000+j
+        Hid = 1000+(HCid*8)+j
         f.write("\t"+genHotel(HCid, Hid)+"\n")
+        f.write("\t\t"+genHotelPhoneNumber(Hid)+"\n")
         for k in range(1, 6):
-            f.write("\t\t"+genRoom(Hid, k)+"\n")
+            f.write("\t\t\t"+genRoom(Hid, k)+"\n")
+            f.write("\t\t\t"+genRoomProblem(Hid, k)+"\n")
+            f.write("\t\t\t"+genRoomAmenetie(Hid, k)+"\n")
+            
             

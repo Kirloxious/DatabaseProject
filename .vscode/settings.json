@@ -10,7 +10,7 @@
             "port": 3306,
             "driver": "MySQL",
             "name": "local instance",
-            "database": "assign2",
+            "database": "e-hotels",
             "username": "root",
             "password": "rootlogin123"
         }
