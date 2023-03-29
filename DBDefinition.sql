@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS Booking (
   PRIMARY KEY (BookingID),
   FOREIGN KEY (HotelID, RoomNumber) REFERENCES Room(HotelID, RoomNumber) ON DELETE SET NULL,
   FOREIGN KEY (Customer) REFERENCES Customer(SSN),
-  CHECK (StartDate > EndDate) -- must be one night
+  CHECK (StartDate < EndDate) -- must be one night
 );
 
 CREATE TABLE IF NOT EXISTS Renting (
@@ -121,11 +121,13 @@ CREATE TABLE IF NOT EXISTS Renting (
   Customer int NOT NULL,
   EndDate date NOT NULL,
   CheckedInByEmployeeID int NOT NULL,
+  BookingID int,
   PRIMARY KEY (RentingID),
   FOREIGN KEY (HotelID, RoomNumber) REFERENCES Room(HotelID, RoomNumber) ON DELETE SET NULL,
   FOREIGN KEY (Customer) REFERENCES Customer(SSN),
   FOREIGN KEY (CheckedInByEmployeeID) REFERENCES Employee(SSN),
-  CHECK (StartDate > EndDate) -- must be one night
+  FOREIGN KEY (BookingID) REFERENCES Booking(BookingID),
+  CHECK (StartDate < EndDate) -- must be one night
 );
 
 CREATE TABLE IF NOT EXISTS Archived (
@@ -137,7 +139,13 @@ CREATE TABLE IF NOT EXISTS Archived (
   FOREIGN KEY (RentingID) REFERENCES Renting(RentingID)
 );
 
-    
+ 
+CREATE VIEW HotelRoomCapacities AS 
+SELECT HotelID, RoomNumber, Capacity
+FROM Room; 
+ 
+ 
+  
 DELIMITER @@
 CREATE TRIGGER hasManagerInsert
 BEFORE INSERT ON hotel
