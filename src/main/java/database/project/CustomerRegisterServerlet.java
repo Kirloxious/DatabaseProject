@@ -25,8 +25,21 @@ public class CustomerRegisterServerlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		//TODO need way to get list of addresses
+		String ssn = request.getParameter("ssn");
+		String first_name = request.getParameter("first_name");
+		String middle_name = request.getParameter("middle_name");
+		if (middle_name.equals("")) middle_name = null;
+		String last_name = request.getParameter("last_name");
+		
+		boolean success = new MySQLConnection().insertCustomer(ssn, first_name, middle_name, last_name);
+		
+		if (success) {
+			response.getWriter().append("Successfully added customer");
+		} else {
+			response.getWriter().append("Failed to add customer");
+		}
+		
 	}
 
 	/**

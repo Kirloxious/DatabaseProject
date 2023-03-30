@@ -91,4 +91,8 @@ public class Room {
 		this.roomAmenetie = roomAmenetie;
 	}
 	
+	@Override
+	public String toString() { //TODO full details
+		return String.format("Hotel ID: %d, Room number: %d", roomHotelID, roomNumber);
+	}
 }

@@ -1,8 +1,6 @@
 package database.project;
 
 import java.io.IOException;
-
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,16 +8,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class CustomerLoginServerlet
+ * Servlet implementation class BookRoomServerlet
  */
-@WebServlet("/CustomerLoginServerlet")
-public class CustomerLoginServerlet extends HttpServlet {
+@WebServlet("/BookRoom")
+public class BookRoomServerlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor. 
      */
-    public CustomerLoginServerlet() {
+    public BookRoomServerlet() {
         // TODO Auto-generated constructor stub
     }
 
@@ -28,14 +26,17 @@ public class CustomerLoginServerlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String ssn = request.getParameter("ssn");
+		String hotel_id = request.getParameter("hotel_id");
+		String room_number = request.getParameter("room_number");
+		String start_date = request.getParameter("start_date");
+		String end_date = request.getParameter("end_date");
 		
-		boolean success = new MySQLConnection().verifyCustomerSSN(ssn);
+		boolean success = new MySQLConnection().bookRoom(Integer.parseInt(ssn), Integer.parseInt(room_number), Integer.parseInt(hotel_id), start_date, end_date);
 		
 		if (success) {
-			request.setAttribute("ssn", ssn);
-			request.getRequestDispatcher("customer/").forward(request, response);
+			response.getWriter().append("Booking made.");
 		} else {
-			response.getWriter().append("Failed to login");
+			response.getWriter().append("Failed make booking.");
 		}
 	}
 

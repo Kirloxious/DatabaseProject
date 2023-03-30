@@ -1,6 +1,7 @@
 package database.project;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,23 +63,28 @@ public class MySQLConnection {
 	
 	/**
 	 * Inserts new customer into the database
-	 * @param params String[SSN, FirstName, MiddleName, LastName, Address]
 	 * */
-	public boolean insertCustomer(String[] params) {
+	public boolean insertCustomer(String ssn, String firstName, String middleName, String lastName) {
 		getConn();
 		
-		 try{
-	        	st = db.createStatement();
+		 try{//TODO address
+			 	String sql = "insert into Customer values(?,?,?,?,?)";
+			 	ps = db.prepareStatement(sql);
+			 	ps.setString(1, ssn);
+	        	ps.setString(2, firstName);
+	        	ps.setString(3, middleName);
+	        	ps.setString(4, lastName);
+	        	ps.setDate(5, new Date(System.currentTimeMillis()));
 	        	//insert customer
-	        	sql = "insert into Customer values("+params[0]+",'"+params[1]+"','"+params[2]+"','"+params[3]+"','"+params[4]+"')";
-	        	st.executeUpdate(sql);
+	        	ps.execute();
 	        	System.out.print(sql);
 	        	
 	        	//insert customer's address
-	        	sql = "insert into CustomerAddress values("+params[0]+",'"+params[5]+"')";
+	        	/*
+	        	sql = "insert into CustomerAddress values("+params[0]+",'"+params[4]+"')";
 	        	System.out.print(sql);
 	            st.executeUpdate(sql);
-	            
+	            */
 	            return true;
 
 	        }catch(SQLException e){
@@ -224,7 +230,7 @@ public class MySQLConnection {
 		
 		ArrayList<Room> Rooms = new ArrayList<Room>();
 		
-		try {
+		try {//TODO make use of view
 			ps = db.prepareStatement("SELECT room.HotelID, room.RoomNumber, room.Price, room.Capacity, room.View, room.Extentable, roomamenities.Amenetie, roomproblems.Problem FROM ((room \r\n"
 					+ "INNER JOIN roomamenities ON (room.HotelID = roomamenities.HotelID AND room.RoomNumber = roomamenities.RoomNumber))\r\n"
 					+ "INNER JOIN roomproblems ON (room.HotelID = roomproblems.HotelID AND room.RoomNumber = roomproblems.RoomNumber))\r\n"
@@ -271,9 +277,10 @@ public class MySQLConnection {
 		
 		try{
         	
-        	ps = db.prepareStatement("INSERT INTO Booking VALUES ('"+startDate+"', "+roomNumber+","+roomHotelID+", "+custSSN+", "+endDate+")");
-			System.out.println(ps);
-        	rs = ps.executeQuery();
+        	ps = db.prepareStatement("INSERT INTO Booking(StartDate, RoomNumber, HotelID, Customer, EndDate)"
+        			+ " VALUES ('"+startDate+"', "+roomNumber+","+roomHotelID+", "+custSSN+", '"+endDate+"')");
+        	System.out.println(ps);
+        	ps.execute();
 			
             
             return true;
