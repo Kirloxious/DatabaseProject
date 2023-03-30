@@ -8,16 +8,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class CustomerLoginServerlet
+ * Servlet implementation class DBAdminServlet
  */
-@WebServlet("/EmployeeLoginServerlet")
-public class EmployeeLoginServerlet extends HttpServlet {
+@WebServlet("/DBAdmin")
+public class DBAdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor. 
      */
-    public EmployeeLoginServerlet() {
+    public DBAdminServlet() {
         // TODO Auto-generated constructor stub
     }
 
@@ -25,16 +25,26 @@ public class EmployeeLoginServerlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String manage = request.getParameter("submit");
 		String ssn = request.getParameter("ssn");
 		
-		boolean success = new MySQLConnection().verifyEmployeeSSN(ssn);
-		
-		if (success) {
-			request.setAttribute("ssn", ssn);
-			request.getRequestDispatcher("employee/").forward(request, response);
-		} else {
-			response.getWriter().append("Failed to login");
+		request.setAttribute("ssn", ssn);
+		switch (manage) {
+		case "Manage Customers":
+			request.getRequestDispatcher("employee/customers.jsp").forward(request, response);
+			return;
+		case "Manage Employees":
+			request.getRequestDispatcher("employee/employees.jsp").forward(request, response);
+			return;
+		case "Manage Hotels":
+			request.getRequestDispatcher("employee/hotels.jsp").forward(request, response);
+			return;
+		case "Manage Rooms":
+			request.getRequestDispatcher("employee/rooms.jsp").forward(request, response);
+			return;
 		}
+		
+		response.getWriter().append("Invalid option");
 	}
 
 	/**

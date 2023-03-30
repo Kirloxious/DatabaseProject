@@ -17,7 +17,7 @@ Room capacity: <label>Min <input type="text" name="min_room_capacity"></label><l
 <label>Star Category: <input type="text" name="stars"></label><br>
 Hotel Size: <label>Min <input type="text" name="min_hotel_size"></label><label> Max <input type="text" name="max_hotel_size"></label><br>
 Price: <label>Min <input type="text" name="min_price"></label><label> Max <input type="text" name="max_price"></label><br>
-<input type="submit" value="Search"</label>
+<input type="submit" value="Search">
 </form>
 </body>
 </html>

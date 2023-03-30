@@ -143,18 +143,22 @@ public class MySQLConnection {
 	
 	/**
 	 * Inserts new employee into the database
-	 * @param params String[SSN, HotelID, FirstName, MiddleName, LastName, RoleTitle, Address]
 	 * */
-	public boolean insertEmployee(String[] params) {
+	public boolean insertEmployee(Integer ssn, Integer hotelID, String firstName, String middleName, String lastName) {
 		getConn();
 		
-		 try{
-	        	st = db.createStatement();
+		 try{ //TODO role and address insertion use transaction
+			 	sql = "insert into Employee values (?,?,?,?,?)";
+	        	ps = db.prepareStatement(sql);
 	        	//insert employee
-	        	sql = "insert into Employee values("+params[0]+","+params[1]+",'"+params[2]+"','"+params[3]+"','"+params[4]+"')";
-	        	st.executeUpdate(sql);
+	        	ps.setInt(1, ssn);
+	        	ps.setInt(2, hotelID);
+	        	ps.setString(3, firstName);
+	        	ps.setString(4, middleName);
+	        	ps.setString(5, lastName);
 	        	System.out.println(sql);
-	        	
+	        	ps.execute();
+	        	/*
 	        	//insert emlpoyee's role
 	        	sql = "insert into Role values("+params[0]+",'"+params[5]+"')";
 	        	System.out.println(sql);
@@ -165,7 +169,7 @@ public class MySQLConnection {
 	        	sql = "insert into EmployeeAddress values("+params[0]+",'"+params[6]+"')";
 	        	System.out.println(sql);
 	            st.executeUpdate(sql);
-	            
+	            */
 	            return true;
 
 	        }catch(SQLException e){
@@ -340,10 +344,15 @@ public class MySQLConnection {
         }
 	}
 	
-	
-	
-	
-	
+	public ArrayList<Integer> getHotels() {
+		//TODO implement return list of all hotelIds
+		ArrayList<Integer> out = new ArrayList<Integer>();
+		out.add(1);
+		out.add(2);
+		out.add(5);
+		return out;
+	} 
+		
 	public static void main(String[] args) {
 	
 		MySQLConnection con = new MySQLConnection();
