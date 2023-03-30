@@ -8,16 +8,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class CustomerLoginServerlet
+ * Servlet implementation class NewRentingServerlet
  */
-@WebServlet("/EmployeeLoginServerlet")
-public class EmployeeLoginServerlet extends HttpServlet {
+@WebServlet("/NewRenting")
+public class NewRentingServerlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor. 
      */
-    public EmployeeLoginServerlet() {
+    public NewRentingServerlet() {
         // TODO Auto-generated constructor stub
     }
 
@@ -27,14 +27,8 @@ public class EmployeeLoginServerlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String ssn = request.getParameter("ssn");
 		
-		boolean success = new MySQLConnection().verifyEmployeeSSN(ssn);
-		
-		if (success) {
-			request.setAttribute("ssn", ssn);
-			request.getRequestDispatcher("employee/").forward(request, response);
-		} else {
-			response.getWriter().append("Failed to login");
-		}
+		request.setAttribute("ssn", ssn);
+		request.getRequestDispatcher("employee/new-renting.jsp").forward(request, response);
 	}
 
 	/**
