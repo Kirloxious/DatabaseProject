@@ -6,7 +6,7 @@
 <title>Register Employee</title>
 </head>
 <body>
-<form action="EmployeeRegisterServerlet" method="post">
+<form action="EmployeeRegisterServerlet" method="get">
 <label>SSN: <input type="text" name="ssn" required="required"></label><br>
 <label>HotelID: <select name="hotel_id">
   <% 

@@ -7,7 +7,7 @@
 <body>
 Employee <%out.print(request.getAttribute("ssn"));%><br>
 <h1>View Active Bookings and Rentings</h1>
-<form action="BookingRenting" method="post">
+<form action="BookingRenting" method="get">
 <input type="hidden" name="ssn" value="<%out.print(request.getAttribute("ssn"));%>">
 <label>Booking ID: <input type="text" name="booking_id"></label><br>
 <label>Renting ID: <input type="text" name="renting_id"></label><br>
@@ -24,13 +24,13 @@ Price: <label>Min <input type="text" name="min_price"></label><label> Max <input
 </form>
 <hr>
 <h1>Create Renting without Booking</h1>
-<form action="NewRenting" method="post">
+<form action="NewRenting" method="get">
 <input type="hidden" name="ssn" value="<%out.print(request.getAttribute("ssn"));%>">
 <input type="submit" value="Create Renting">
 </form>
 <hr>
 <h1>DB admin</h1>
-<form action="DBAdmin" method="post">
+<form action="DBAdmin" method="get">
 <input type="hidden" name="ssn" value="<%out.print(request.getAttribute("ssn"));%>">
 <input type="submit" name="submit" value="Manage Customers"><br>
 <input type="submit" name="submit" value="Manage Employees"><br>

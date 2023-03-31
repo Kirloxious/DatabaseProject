@@ -16,13 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RoomSearchServerlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * Default constructor. 
-     */
-    public RoomSearchServerlet() {
-        // TODO Auto-generated constructor stub
-    }
-
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */

@@ -7,7 +7,7 @@
 <body>
 Customer <%out.print(request.getAttribute("ssn"));%>
 
-<form action="RoomSearch" method="post">
+<form action="RoomSearch" method="get">
 <input type="hidden" name="ssn" value="<%out.print(request.getAttribute("ssn"));%>">
 <label>Start Date: <input type="date" name="start_date" required="required"></label><br>
 <label>End Date: <input type="date" name="end_date" required="required"></label><br>
