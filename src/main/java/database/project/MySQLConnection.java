@@ -118,26 +118,45 @@ public class MySQLConnection {
         }
     }
 	
-	/**
-	 * Updates the information of a Customer at the given columnName with newInfo for the customer with custSSN.
-	 * */
-	public boolean updateCustomerInfo(String columnName, String newInfo, Integer custSSN) {
+	public ArrayList<Customer> getAllCustomers() {
 		getConn();
 		
-		try{
-            ps = db.prepareStatement("UPDATE Customer SET "+columnName+"=? WHERE SSN=?");
-            ps.setString(1, newInfo);
-            ps.setInt(2, custSSN);
-            System.out.println(ps);
-            ps.executeUpdate();
-            return true;
-        }catch(SQLException e){
-            e.printStackTrace();
-            return false;
-        }finally {
-        	closeDB();
-        }
+		ArrayList<Customer> out = new ArrayList<>();
+		PreparedStatement ps2 = null;
+		ResultSet rs2 = null;
+		try {
+			ps = db.prepareStatement("SELECT * FROM Customer");
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				Customer c = new Customer();
+				c.setSsn(rs.getInt("SSN"));
+				c.setRegisteredDate(rs.getDate("RegisterDate"));
+				c.setFirstName(rs.getString("FirstName"));
+				c.setMiddleName(rs.getString("MiddleName"));
+				c.setLastName(rs.getString("LastName"));
+				
+				ps2 = db.prepareStatement("SELECT Address FROM CustomerAddress WHERE SSN=?");
+				ps2.setInt(1, c.getSsn());
+				rs2 = ps2.executeQuery();
+				while (rs2.next()) {
+					c.addAddress(rs2.getString("Address"));
+				}
+				out.add(c);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+	    } finally {
+			try {
+				if (ps2 != null) ps2.close();
+				if (rs2 != null) rs2.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    	closeDB();
+	    }
 		
+		return out;
 	}
 	
 	
@@ -203,26 +222,57 @@ public class MySQLConnection {
         }
     }
 	
-	/**
-	 * Updates the information of an Employee at the given columnName with newInfo for the customer with empSSN.
-	 * */
-	public boolean updateEmployeeInfo(String columnName, String newInfo, Integer empSSN) {
+	public ArrayList<Employee> getAllEmployees() {
 		getConn();
 		
-		try{
-            ps = db.prepareStatement("UPDATE Employee SET "+columnName+"=? WHERE SSN=?");
-            ps.setString(1, newInfo);
-            ps.setInt(2, empSSN);
-            System.out.println(ps);
-            ps.executeUpdate();
-            return true;
-        }catch(SQLException e){
-            e.printStackTrace();
-            return false;
-        }finally {
-        	closeDB();
-        }
+		ArrayList<Employee> out = new ArrayList<>();
+		PreparedStatement ps2 = null;
+		ResultSet rs2 = null;
+		try {
+			ps = db.prepareStatement("SELECT * FROM Employee");
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				Employee e = new Employee();
+				e.setSsn(rs.getInt("SSN"));
+				e.setHotelID(rs.getInt("HotelID"));
+				e.setFirstName(rs.getString("FirstName"));
+				e.setMiddleName(rs.getString("MiddleName"));
+				e.setLastName(rs.getString("LastName"));
+				
+				ps2 = db.prepareStatement("SELECT Address FROM EmployeeAddress WHERE SSN=?");
+				ps2.setInt(1, e.getSsn());
+				rs2 = ps2.executeQuery();
+				while (rs2.next()) {
+					e.addAddress(rs2.getString("Address"));
+				}
+				ps2.close();
+				rs2.close();
+				
+				ps2 = db.prepareStatement("SELECT RoleTitle FROM Role WHERE SSN=?");
+				ps2.setInt(1, e.getSsn());
+				rs2 = ps2.executeQuery();
+				while (rs2.next()) {
+					e.addRole(rs2.getString("RoleTitle"));
+				}
+				ps2.close();
+				rs2.close();
+				
+				out.add(e);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+	    } finally {
+			try {
+				if (ps2 != null) ps2.close();
+				if (rs2 != null) rs2.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    	closeDB();
+	    }
 		
+		return out;
 	}
 	
 	
@@ -234,7 +284,7 @@ public class MySQLConnection {
 		
 		ArrayList<Room> Rooms = new ArrayList<Room>();
 		
-		try {//TODO make use of view
+		try {//TODO make use of view?
 			ps = db.prepareStatement("SELECT room.HotelID, room.RoomNumber, room.Price, room.Capacity, room.View, room.Extentable, roomamenities.Amenetie, roomproblems.Problem FROM ((room \r\n"
 					+ "INNER JOIN roomamenities ON (room.HotelID = roomamenities.HotelID AND room.RoomNumber = roomamenities.RoomNumber))\r\n"
 					+ "INNER JOIN roomproblems ON (room.HotelID = roomproblems.HotelID AND room.RoomNumber = roomproblems.RoomNumber))\r\n"
@@ -352,12 +402,72 @@ public class MySQLConnection {
 		out.add(5);
 		return out;
 	} 
-		
-	public static void main(String[] args) {
-	
-		MySQLConnection con = new MySQLConnection();
-		
-		
+
+	public boolean addCustomerAddress(int ssn, String address) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean deleteCustomerAddress(int ssn, String address) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean updateCustomerAddress(int ssn, String oldAddress, String newAddress) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean updateCustomer(int ssn, String first_name, String middle_name, String last_name, String date) {
+		//update customer ssn with new data
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean deleteCustomer(int ssn) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean addEmployeeAddress(int ssn, String address) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean updateEmployeeAddress(int ssn, String old_address, String new_address) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean deleteEmployeeAddress(int ssn, String old_address) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean updateEmployee(int ssn, String hotel_id, String first_name, String middle_name,
+			String last_name, String date) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean deleteEmployee(int ssn) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean updateEmployeerole(int ssn, String old_role, String new_role) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean deleteEmployeeRole(int ssn, String old_role) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean addEmployeeRole(int parseInt, String role) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	
