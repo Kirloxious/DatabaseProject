@@ -98,7 +98,7 @@ public class CustomerMangerServlet extends HttpServlet {
 		if (action.equals("Update")) {	
 			boolean success = new MySQLConnection().updateCustomer(Integer.parseInt(customer_ssn), first_name, middle_name, last_name, date);
 			if (success) {
-				response.getWriter().append("Updated cutomer");
+				response.getWriter().append("Updated customer");
 			} else {
 				response.getWriter().append("Failed to update customer");
 			}
