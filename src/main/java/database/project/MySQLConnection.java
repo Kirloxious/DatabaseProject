@@ -353,7 +353,7 @@ public class MySQLConnection {
 	 * 
 	 * */
 	public boolean rentRoom(Integer custSSN, Integer roomNumber, Integer roomHotelID, String startDate, String endDate, Integer BookingID, Integer employeeSSN) {
-		
+		getConn();
 		try{
         	
         	ps = db.prepareStatement("INSERT INTO Renting VALUES ('"+startDate+"', "+roomNumber+","+roomHotelID+", "+custSSN+", "+endDate+", "+employeeSSN+", "+BookingID+")");
@@ -377,7 +377,7 @@ public class MySQLConnection {
 	 * 
 	 * */
 	public boolean rentRoom(Integer custSSN, Integer roomNumber, Integer roomHotelID, String startDate, String endDate, Integer employeeSSN) {
-		
+		getConn();
 		try{
         	
         	ps = db.prepareStatement("INSERT INTO Renting VALUES ('"+startDate+"', "+roomNumber+","+roomHotelID+", "+custSSN+", "+endDate+", "+employeeSSN+")");
@@ -395,79 +395,280 @@ public class MySQLConnection {
 	}
 	
 	public ArrayList<Integer> getHotels() {
-		//TODO implement return list of all hotelIds
-		ArrayList<Integer> out = new ArrayList<Integer>();
-		out.add(1);
-		out.add(2);
-		out.add(5);
-		return out;
+		getConn();
+		ArrayList<Integer> out = new ArrayList<>();
+		try{
+			String sql = "SELECT HotelID FROM Hotel";
+        	ps = db.prepareStatement(sql);
+			System.out.println(sql);
+        	rs = ps.executeQuery();
+            
+        	while (rs.next()) {
+        		out.add(rs.getInt("HotelID"));
+        	}
+        	
+            return out;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return null;	 
+        }finally {
+        	closeDB();
+        }
 	} 
 
 	public boolean addCustomerAddress(int ssn, String address) {
-		// TODO Auto-generated method stub
-		return false;
+		getConn();
+		try{
+			String sql = "INSERT INTO CustomerAddress VALUES (?,?)";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, ssn);
+        	ps.setString(2, address);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
 	public boolean deleteCustomerAddress(int ssn, String address) {
-		// TODO Auto-generated method stub
-		return false;
+		getConn();
+		try{
+			String sql = "DELETE FROM CustomerAddress WHERE SSN=? AND Address=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, ssn);
+        	ps.setString(2, address);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
 	public boolean updateCustomerAddress(int ssn, String oldAddress, String newAddress) {
-		// TODO Auto-generated method stub
-		return false;
+		getConn();
+		try{
+			String sql = "UPDATE CustomerAddress SET Address=? WHERE SSN=? AND Address=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setString(1, newAddress);
+        	ps.setInt(2, ssn);
+        	ps.setString(3, oldAddress);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
 	public boolean updateCustomer(int ssn, String first_name, String middle_name, String last_name, String date) {
-		//update customer ssn with new data
-		// TODO Auto-generated method stub
-		return false;
+		getConn();
+		try{
+			String sql = "UPDATE Customer SET FirstName=?, MiddleName=?, LastName=?, RegisterDate=? WHERE SSN=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setString(1, first_name);
+        	ps.setString(2, middle_name);
+        	ps.setString(3, last_name);
+        	ps.setString(4, date);
+        	ps.setInt(5, ssn);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
 	public boolean deleteCustomer(int ssn) {
-		// TODO Auto-generated method stub
-		return false;
+		getConn();
+		try{
+			String sql = "DELETE FROM Customer WHERE SSN=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, ssn);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
 	public boolean addEmployeeAddress(int ssn, String address) {
-		// TODO Auto-generated method stub
-		return false;
+		getConn();
+		try{
+			String sql = "INSERT INTO EmployeeAddress VALUES (?,?)";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, ssn);
+        	ps.setString(2, address);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
 	public boolean updateEmployeeAddress(int ssn, String old_address, String new_address) {
-		// TODO Auto-generated method stub
-		return false;
+		getConn();
+		try{
+			String sql = "UPDATE EmployeeAddress SET Address=? WHERE SSN=? AND Address=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setString(1, new_address);
+        	ps.setInt(2, ssn);
+        	ps.setString(3, old_address);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
-	public boolean deleteEmployeeAddress(int ssn, String old_address) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean deleteEmployeeAddress(int ssn, String address) {
+		getConn();
+		try{
+			String sql = "DELETE FROM EmployeeAddress WHERE SSN=? AND Address=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, ssn);
+        	ps.setString(2, address);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
-	public boolean updateEmployee(int ssn, String hotel_id, String first_name, String middle_name,
+	public boolean updateEmployee(int ssn, int hotel_id, String first_name, String middle_name,
 			String last_name, String date) {
-		// TODO Auto-generated method stub
-		return false;
+		getConn();
+		try{
+			String sql = "UPDATE Employee SET HotelID=?, FirstName=?, MiddleName=?, LastName=? WHERE SSN=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotel_id);
+        	ps.setString(2, first_name);
+        	ps.setString(3, middle_name);
+        	ps.setString(4, last_name);
+        	ps.setInt(5, ssn);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
 	public boolean deleteEmployee(int ssn) {
-		// TODO Auto-generated method stub
-		return false;
+		getConn();
+		try{
+			String sql = "DELETE FROM Employee WHERE SSN=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, ssn);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
 	public boolean updateEmployeerole(int ssn, String old_role, String new_role) {
-		// TODO Auto-generated method stub
-		return false;
+		getConn();
+		try{
+			String sql = "UPDATE Role SET RoleTitle=? WHERE SSN=? AND RoleTitle=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setString(1, new_role);
+        	ps.setInt(2, ssn);
+        	ps.setString(3, old_role);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
-	public boolean deleteEmployeeRole(int ssn, String old_role) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean deleteEmployeeRole(int ssn, String role) {
+		getConn();
+		try{
+			String sql = "DELETE FROM Role WHERE SSN=? AND RoleTitle=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, ssn);
+        	ps.setString(2, role);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 
-	public boolean addEmployeeRole(int parseInt, String role) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean addEmployeeRole(int ssn, String role) {
+		getConn();
+		try{
+			String sql = "INSERT INTO Role VALUES (?,?)";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, ssn);
+        	ps.setString(2, role);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
 	}
 	
 	

@@ -140,9 +140,9 @@ public class EmployeeMangerServlet extends HttpServlet {
 		String last_name = request.getParameter("last_name");
 		String date = request.getParameter("date");
 		if (action.equals("Update")) {	
-			boolean success = new MySQLConnection().updateEmployee(Integer.parseInt(employee_ssn), hotel_id, first_name, middle_name, last_name, date);
+			boolean success = new MySQLConnection().updateEmployee(Integer.parseInt(employee_ssn), Integer.parseInt(hotel_id), first_name, middle_name, last_name, date);
 			if (success) {
-				response.getWriter().append("Updated cutomer");
+				response.getWriter().append("Updated employee");
 			} else {
 				response.getWriter().append("Failed to update employee");
 			}
