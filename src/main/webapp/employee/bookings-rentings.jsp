@@ -7,6 +7,8 @@
 <title>Bookings and Rentings</title>
 </head>
 <body>
-TODO
+list all bookings options to archive or convert into renting
+
+list all rentings options to archive
 </body>
 </html>

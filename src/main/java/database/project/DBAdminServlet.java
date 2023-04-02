@@ -32,9 +32,6 @@ public class DBAdminServlet extends HttpServlet {
 		case "Manage Hotels":
 			request.getRequestDispatcher("employee/hotels.jsp").forward(request, response);
 			return;
-		case "Manage Rooms":
-			request.getRequestDispatcher("employee/rooms.jsp").forward(request, response);
-			return;
 		}
 		
 		response.getWriter().append("Invalid option");

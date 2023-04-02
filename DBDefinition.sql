@@ -21,7 +21,7 @@ Primary Key (HotelChainID, Email)
 
 CREATE TABLE IF NOT EXISTS Hotel(
 HotelChainID int Not Null, 
-NumberOfRooms int Check (NumberOfRooms > 0),
+NumberOfRooms int Check (NumberOfRooms >= 0),
 StarRating int(1) Check (StarRating > 0 AND StarRating < 6),
 Address varchar(200),
 ContactEmail varchar(50),
