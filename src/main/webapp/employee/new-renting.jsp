@@ -7,6 +7,6 @@
 <title>New Renting</title>
 </head>
 <body>
-TODO
+list all available rooms with options to create a new renting for them
 </body>
 </html>

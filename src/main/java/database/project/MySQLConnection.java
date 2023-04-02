@@ -279,15 +279,13 @@ public class MySQLConnection {
 	/**
 	 * Returns all the rooms which do not have a booking or renting currently.
 	 * */
-	public ArrayList<Room> getAllAvailableRooms(){
+	public ArrayList<Room> getAllAvailableRooms(){ //TODO redo
 		getConn();
 		
 		ArrayList<Room> Rooms = new ArrayList<Room>();
 		
-		try {//TODO make use of view?
-			ps = db.prepareStatement("SELECT room.HotelID, room.RoomNumber, room.Price, room.Capacity, room.View, room.Extentable, roomamenities.Amenetie, roomproblems.Problem FROM ((room \r\n"
-					+ "INNER JOIN roomamenities ON (room.HotelID = roomamenities.HotelID AND room.RoomNumber = roomamenities.RoomNumber))\r\n"
-					+ "INNER JOIN roomproblems ON (room.HotelID = roomproblems.HotelID AND room.RoomNumber = roomproblems.RoomNumber))\r\n"
+		try {
+			ps = db.prepareStatement("SELECT room.HotelID, room.RoomNumber, room.Price, room.Capacity, room.View, room.Extentable, roomamenities.Amenetie, roomproblems.Problem FROM Room\r\n"
 					+ "WHERE NOT EXISTS(\r\n"
 					+ "    SELECT Booking.HotelID, Booking.RoomNumber FROM Booking \r\n"
 					+ "    WHERE room.HotelID = Booking.HotelID AND room.RoomNumber = Booking.RoomNumber\r\n"
@@ -306,9 +304,10 @@ public class MySQLConnection {
 				int roomCapacity = rs.getInt("Capacity");
 				String roomView = rs.getString("View");
 				boolean extentable = rs.getBoolean("Extentable");
-				String roomAmenitie = rs.getString("Amenetie");
-				String roomProblem = rs.getString("Problem");
-				Room room = new Room(roomNumber, roomHotelID, roomPrice, roomCapacity, roomView, extentable, roomProblem, roomAmenitie);
+				Room room = new Room(roomNumber, roomHotelID, roomPrice, roomCapacity, roomView, extentable);
+				
+				//TODO Need a second query to get amenities and problems
+				
 				Rooms.add(room);
 			}
 		} catch (SQLException e) {
@@ -414,7 +413,55 @@ public class MySQLConnection {
         }finally {
         	closeDB();
         }
-	} 
+	}
+	
+	public ArrayList<Hotel> getAllHotels() {
+		getConn();
+		ArrayList<Hotel> out = new ArrayList<>();
+		PreparedStatement ps2 = null;
+		ResultSet rs2 = null;
+		
+		try {
+			String sql = "SELECT * FROM Hotel";
+			ps = db.prepareStatement(sql);
+			System.out.println(sql);
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				Hotel h = new Hotel();
+				h.setAddress(rs.getString("Address"));
+				h.setEmail(rs.getString("ContactEmail"));
+				h.setHotelChainID(rs.getInt("HotelChainID"));
+				h.setHotelID(rs.getInt("HotelID"));
+				h.setNumberOfRooms(rs.getInt("NumberOfRooms"));
+				h.setStarRating(rs.getInt("StarRating"));
+				
+				ps2 = db.prepareStatement("SELECT PhoneNumber FROM HotelPhoneNumber WHERE HotelID=?");
+				ps2.setInt(1, h.getHotelID());
+				
+				rs2 = ps2.executeQuery();
+				while (rs2.next()) {
+					h.addPhoneNumber(rs2.getString("PhoneNumber"));
+				}
+				
+				out.add(h);
+				
+				ps2.close();
+				rs2.close();
+			}
+		} catch(SQLException e){
+            e.printStackTrace();
+            return null;	 
+        }finally {
+        	try {
+        		if (ps2 != null) ps2.close();
+        		if (rs2 != null) rs2.close();
+        	} catch (SQLException e) {}
+        	closeDB();
+        }
+		
+		return out;
+	}
 
 	public boolean addCustomerAddress(int ssn, String address) {
 		getConn();
@@ -659,6 +706,126 @@ public class MySQLConnection {
         	ps = db.prepareStatement(sql);
         	ps.setInt(1, ssn);
         	ps.setString(2, role);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean updateHotel(int hotelID, int hotelChainID, int starRating, String address, String email) {
+		getConn();
+		try{
+			String sql = "UPDATE Hotel SET HotelChainID=?, StarRating=?, Address=?, ContactEmail=? WHERE HotelID=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelChainID);
+        	ps.setInt(2, starRating);
+        	ps.setString(3, address);
+        	ps.setString(4, email);
+        	ps.setInt(5, hotelID);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean deleteHotel(int hotelID) {
+		getConn();
+		try{
+			String sql = "DELETE FROM Hotel WHERE HotelID=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelID);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean deleteHotelPhone(int hotelID, String phone) {
+		getConn();
+		try{
+			String sql = "DELETE FROM HotelPhoneNumber WHERE HotelID=? AND PhoneNumber=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelID);
+        	ps.setString(2, phone);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean updateHotelPhone(int hotelID, String old_phone_number, String new_phone_number) {
+		getConn();
+		try{
+			String sql = "UPDATE HotelPhoneNumber SET PhoneNumber=? WHERE HotelID=? AND PhoneNumber=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setString(1, new_phone_number);
+        	ps.setInt(2, hotelID);
+        	ps.setString(3, old_phone_number);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean addHotelPhone(int hotelID, String phone) {
+		getConn();
+		try{
+			String sql = "INSERT INTO HotelPhoneNumber VALUES (?,?)";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelID);
+        	ps.setString(2, phone);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean addHotel(int hotelChainID, int starRating, String address, String email) {
+		//TODO dealing with manager constraint
+		getConn();
+		try{
+			String sql = "INSERT INTO Hotel (HotelChainID, NumberOfRooms, StarRating, Address, ContactEmail) VALUES (?,0,?,?,?)";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelChainID);
+        	ps.setInt(2, starRating);
+        	ps.setString(3, address);
+        	ps.setString(4, email);
 			System.out.println(sql);
         	ps.execute();
         	

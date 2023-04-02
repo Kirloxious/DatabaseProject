@@ -1,30 +1,29 @@
 package database.project;
 
-public class Room {
+import java.util.ArrayList;
 
+public class Room {
 	private int roomNumber;
 	private int roomHotelID;
 	private double roomPrice;
 	private int roomCapacity;
 	private String roomView;
 	private boolean extentable;
-	private String roomProblem;
-	private String roomAmenetie;
+	private ArrayList<String> roomProblems = new ArrayList<>();
+	private ArrayList<String> roomAmeneties = new ArrayList<>();
 	
 	
 	public Room() {
 		
 	}
 	
-	public Room(int roomNumber, int roomHotelID, double roomPrice, int roomCapacity, String roomView, boolean extentable, String roomProblem, String roomAmenetie) {
+	public Room(int roomNumber, int roomHotelID, double roomPrice, int roomCapacity, String roomView, boolean extentable) {
 		this.roomNumber = roomNumber;
 		this.roomHotelID = roomHotelID;
 		this.roomPrice = roomPrice;
 		this.roomCapacity = roomCapacity;
 		this.roomView = roomView;
 		this.extentable = extentable;
-		this.roomProblem = roomProblem;
-		this.roomAmenetie = roomAmenetie;
 	}
 
 	public int getRoomNumber() {
@@ -75,22 +74,21 @@ public class Room {
 		this.extentable = extentable;
 	}
 
-	public String getRoomProblem() {
-		return roomProblem;
-	}
-
-	public void setRoomProblem(String roomProblem) {
-		this.roomProblem = roomProblem;
-	}
-
-	public String getRoomAmenetie() {
-		return roomAmenetie;
-	}
-
-	public void setRoomAmenetie(String roomAmenetie) {
-		this.roomAmenetie = roomAmenetie;
-	}
 	
+	public ArrayList<String> getRoomProblems() {
+		return roomProblems;
+	}
+
+	public ArrayList<String> getRoomAmeneties() {
+		return roomAmeneties;
+	}
+	public void addProblem(String problem) {
+		roomProblems.add(problem);
+	}
+	public void addAmenetie(String amenetie) {
+		roomAmeneties.add(amenetie);
+	}
+
 	@Override
 	public String toString() { //TODO full details
 		return String.format("Hotel ID: %d, Room number: %d", roomHotelID, roomNumber);
