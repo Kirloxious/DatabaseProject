@@ -140,31 +140,6 @@ CREATE TABLE IF NOT EXISTS Archived (
 );
 
  
-CREATE VIEW HotelRoomCapacities AS 
-SELECT HotelID, RoomNumber, Capacity
-FROM Room; 
- 
- 
-  
-DELIMITER @@
-CREATE TRIGGER hasManagerInsert
-BEFORE INSERT ON hotel
-FOR EACH ROW
-BEGIN
-   IF Not Exists(Select Employee, RoleTitle From Employee, Role where Employee.HotelID = Hotel.HotelID AND RoleTitle like "Manager") THEN
-        signal sqlstate '45000' set message_text = 'Manager must exist';       
-   END IF;
-END @@ 
-DELIMITER ;
 
-DELIMITER @@
-CREATE TRIGGER hasManagerUpdate
-BEFORE UPDATE ON hotel
-FOR EACH ROW
-BEGIN
-   IF Not Exists(Select Employee, RoleTitle From Employee, Role where Employee.HotelID = Hotel.HotelID AND RoleTitle like "Manager") THEN
-        signal sqlstate '45000' set message_text = 'Manager must exist';       
-   END IF;
-END @@ 
-DELIMITER ;
+ 
 
