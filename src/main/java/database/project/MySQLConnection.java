@@ -838,5 +838,252 @@ public class MySQLConnection {
         }
 	}
 	
-	
+	public ArrayList<Room> getRoomsInHotel(int hotelID) {
+		getConn();
+		ArrayList<Room> out = new ArrayList<>();
+		PreparedStatement ps2 = null;
+		ResultSet rs2 = null;
+		
+		try {
+			String sql = "SELECT * FROM Room WHERE HotelID=?";
+			ps = db.prepareStatement(sql);
+			ps.setInt(1, hotelID);
+			System.out.println(sql);
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				Room r = new Room();
+				r.setExtentable(rs.getBoolean("Extentable"));
+				r.setRoomCapacity(rs.getInt("Capacity"));
+				r.setRoomHotelID(rs.getInt("HotelID"));
+				r.setRoomNumber(rs.getInt("RoomNumber"));
+				r.setRoomPrice(rs.getDouble("Price"));
+				r.setRoomView(rs.getString("View"));
+
+				ps2 = db.prepareStatement("SELECT Problem FROM RoomProblems WHERE HotelID=? AND RoomNumber=?");
+				ps2.setInt(1, r.getRoomHotelID());
+				ps2.setInt(2, r.getRoomNumber());
+				
+				rs2 = ps2.executeQuery();
+				while (rs2.next()) {
+					r.addProblem(rs2.getString("Problem"));
+				}
+				ps2.close();
+				rs2.close();
+				
+				ps2 = db.prepareStatement("SELECT Amenetie FROM RoomAmenities WHERE HotelID=? AND RoomNumber=?");
+				ps2.setInt(1, r.getRoomHotelID());
+				ps2.setInt(2, r.getRoomNumber());
+				
+				rs2 = ps2.executeQuery();
+				while (rs2.next()) {
+					r.addAmenetie(rs2.getString("Amenetie"));
+				}
+				
+				out.add(r);
+				
+				ps2.close();
+				rs2.close();
+			}
+		} catch(SQLException e){
+            e.printStackTrace();
+            return null;	 
+        }finally {
+        	try {
+        		if (ps2 != null) ps2.close();
+        		if (rs2 != null) rs2.close();
+        	} catch (SQLException e) {}
+        	closeDB();
+        }
+		
+		return out;
+	}
+
+	public boolean addRoom(int hotelID, int roomNumber, String price, int capacity, String view, boolean extendable) {
+		getConn();
+		try{
+			String sql = "INSERT INTO Room VALUES (?,?,?,?,?,?)";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelID);
+        	ps.setInt(2, roomNumber);
+        	ps.setString(3, price);
+        	ps.setInt(4, capacity);
+        	ps.setString(5, view);
+        	ps.setBoolean(6, extendable);
+        	
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean addRoomAmenetie(int hotelID, int roomNumber, String amenetie) {
+		getConn();
+		try{
+			String sql = "INSERT INTO RoomAmenities VALUES (?,?,?)";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelID);
+        	ps.setInt(2, roomNumber);
+        	ps.setString(3, amenetie);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean updateRoomAmenetie(int hotelID, int roomNumber, String old_amenetie, String new_amenetie) {
+		getConn();
+		try{
+			String sql = "UPDATE RoomAmenities SET Amenetie=? WHERE HotelID=? AND RoomNumber=? AND Amenetie=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setString(1, new_amenetie);
+        	ps.setInt(2, hotelID);
+        	ps.setInt(3, roomNumber);
+        	ps.setString(4, old_amenetie);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean deleteRoomAmenetie(int hotelID, int roomNumber, String amenetie) {
+		getConn();
+		try{
+			String sql = "DELETE FROM RoomAmenities WHERE HotelID=? AND RoomNumber=? AND Amenetie=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelID);
+        	ps.setInt(2, roomNumber);
+        	ps.setString(3, amenetie);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean addRoomProblem(int hotelID, int roomNumber, String problem) {
+		getConn();
+		try{
+			String sql = "INSERT INTO RoomProblems VALUES (?,?,?)";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelID);
+        	ps.setInt(2, roomNumber);
+        	ps.setString(3, problem);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean updateRoomProblem(int hotelID, int roomNumber, String old_problem, String new_problem) {
+		getConn();
+		try{
+			String sql = "UPDATE RoomProblems SET Problem=? WHERE HotelID=? AND RoomNumber=? AND Problem=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setString(1, new_problem);
+        	ps.setInt(2, hotelID);
+        	ps.setInt(3, roomNumber);
+        	ps.setString(4, old_problem);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean deleteRoomProblem(int hotelID, int roomNumber, String problem) {
+		getConn();
+		try{
+			String sql = "DELETE FROM RoomProblems WHERE HotelID=? AND RoomNumber=? AND Problem=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelID);
+        	ps.setInt(2, roomNumber);
+        	ps.setString(3, problem);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean updateRoom(int hotelID, int roomNumber, String price, int capacity, String view, boolean extendable) {
+		getConn();
+		try{
+			String sql = "UPDATE Room SET Price=?, Capacity=?, View=?, Extentable=? WHERE HotelID=? AND RoomNumber=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setString(1, price);
+        	ps.setInt(2, capacity);
+        	ps.setString(3, view);
+        	ps.setBoolean(4, extendable);
+        	ps.setInt(5, hotelID);
+        	ps.setInt(6, roomNumber);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+
+	public boolean deleteRoom(int hotelID, int roomNumber) {
+		getConn();
+		try{
+			String sql = "DELETE FROM Room WHERE HotelID=? AND RoomNumber=?";
+        	ps = db.prepareStatement(sql);
+        	ps.setInt(1, hotelID);
+        	ps.setInt(2, roomNumber);
+			System.out.println(sql);
+        	ps.execute();
+        	
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
 }
