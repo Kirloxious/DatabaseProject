@@ -8,25 +8,36 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class EmployeeLoginServerlet
+ * Servlet implementation class ArchiveRoomServlet
  */
-@WebServlet("/EmployeeLoginServerlet")
-public class EmployeeLoginServerlet extends HttpServlet {
+@WebServlet("/ArchiveRoom")
+public class ArchiveRoomServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+       
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String ssn = request.getParameter("ssn");
-		
-		boolean success = new MySQLConnection().verifyEmployeeSSN(ssn);
+		String bookingID = request.getParameter("bookingID");
+		String rentingID = request.getParameter("rentingID");
+		boolean success;
+		//only archive renting
+		if(bookingID.equals("nil")) {
+			success = new MySQLConnection().ArchiveRoomRenting(Integer.parseInt(rentingID));
+		}
+		//only archive booking
+		else if(rentingID.equals("nil")) {
+			success = new MySQLConnection().ArchiveRoomBooking(Integer.parseInt(bookingID));
+		}
+		else {
+			success = new MySQLConnection().ArchiveRoom(Integer.parseInt(bookingID), Integer.parseInt(rentingID));			
+		}
 		
 		if (success) {
-			request.setAttribute("ssn", ssn);
-			request.getRequestDispatcher("employee/").forward(request, response);
+			response.getWriter().append("Room arhived.");
 		} else {
-			response.getWriter().append("Failed to login");
+			response.getWriter().append("Failed to archive room.");
 		}
 	}
 
@@ -34,6 +45,7 @@ public class EmployeeLoginServerlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

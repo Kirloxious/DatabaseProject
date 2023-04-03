@@ -285,7 +285,7 @@ public class MySQLConnection {
 		ArrayList<Room> Rooms = new ArrayList<Room>();
 		
 		try {
-			ps = db.prepareStatement("SELECT room.HotelID, room.RoomNumber, room.Price, room.Capacity, room.View, room.Extentable, roomamenities.Amenetie, roomproblems.Problem FROM Room\r\n"
+			ps = db.prepareStatement("SELECT room.HotelID, room.RoomNumber, room.Price, room.Capacity, room.View, room.Extentable FROM room\r\n"
 					+ "WHERE NOT EXISTS(\r\n"
 					+ "    SELECT Booking.HotelID, Booking.RoomNumber FROM Booking \r\n"
 					+ "    WHERE room.HotelID = Booking.HotelID AND room.RoomNumber = Booking.RoomNumber\r\n"
@@ -355,9 +355,9 @@ public class MySQLConnection {
 		getConn();
 		try{
         	
-        	ps = db.prepareStatement("INSERT INTO Renting VALUES ('"+startDate+"', "+roomNumber+","+roomHotelID+", "+custSSN+", "+endDate+", "+employeeSSN+", "+BookingID+")");
+        	ps = db.prepareStatement("INSERT INTO Renting(StartDate, RoomNumber, HotelID, Customer, EndDate, CheckedInByEmployeeID, BookingID) VALUES ('"+startDate+"', "+roomNumber+","+roomHotelID+", "+custSSN+", '"+endDate+"', "+employeeSSN+", "+BookingID+")");
 			System.out.println(ps);
-        	rs = ps.executeQuery();
+        	ps.execute();
 			
             
             return true;
@@ -379,9 +379,9 @@ public class MySQLConnection {
 		getConn();
 		try{
         	
-        	ps = db.prepareStatement("INSERT INTO Renting VALUES ('"+startDate+"', "+roomNumber+","+roomHotelID+", "+custSSN+", "+endDate+", "+employeeSSN+")");
+        	ps = db.prepareStatement("INSERT INTO Renting(StartDate, RoomNumber, HotelID, Customer, EndDate, CheckedInByEmployeeID) VALUES ('"+startDate+"', "+roomNumber+","+roomHotelID+", "+custSSN+", '"+endDate+"', "+employeeSSN+")");
 			System.out.println(ps);
-        	rs = ps.executeQuery();
+			ps.execute();
 			
             
             return true;
@@ -1086,4 +1086,214 @@ public class MySQLConnection {
         	closeDB();
         }
 	}
+	
+	public ArrayList<Booking> getAllBookings(){
+		getConn();
+		
+		ArrayList<Booking> bookings = new ArrayList<Booking>();
+		
+		try {
+			ps = db.prepareStatement("SELECT * FROM Booking");
+			rs = ps.executeQuery();
+			while(rs.next()){
+				int bookingId = rs.getInt("BookingID");
+				Date startDate = rs.getDate("StartDate");
+				int roomNumber = rs.getInt("RoomNumber");
+				int hotelId= rs.getInt("HotelID");
+				int customerSSN= rs.getInt("Customer");
+				Date endDate = rs.getDate("EndDate");
+				Booking booking = new Booking(bookingId, startDate, roomNumber, hotelId, customerSSN, endDate);
+				
+
+				
+				bookings.add(booking);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+        	closeDB();
+        }
+					
+		return bookings;
+	}
+	
+	public ArrayList<Booking> getAllActiveBookings(){
+		getConn();
+		
+		ArrayList<Booking> bookings = new ArrayList<Booking>();
+		
+		try {
+			ps = db.prepareStatement("SELECT * FROM Booking WHERE NOT Exists(SELECT * from archived WHERE booking.BookingID = archived.BookingID)");
+			rs = ps.executeQuery();
+			while(rs.next()){
+				int bookingId = rs.getInt("BookingID");
+				Date startDate = rs.getDate("StartDate");
+				int roomNumber = rs.getInt("RoomNumber");
+				int hotelId= rs.getInt("HotelID");
+				int customerSSN= rs.getInt("Customer");
+				Date endDate = rs.getDate("EndDate");
+				Booking booking = new Booking(bookingId, startDate, roomNumber, hotelId, customerSSN, endDate);
+				
+
+				
+				bookings.add(booking);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+        	closeDB();
+        }
+					
+		return bookings;
+	}
+	
+	public ArrayList<Renting> getAllRentings(){
+		getConn();
+		
+		ArrayList<Renting> rentings = new ArrayList<Renting>();
+		
+		try {
+			ps = db.prepareStatement("SELECT * FROM Renting");
+			rs = ps.executeQuery();
+			while(rs.next()){
+				int rentingId = rs.getInt("RentingID");
+				Date startDate = rs.getDate("StartDate");
+				int roomNumber = rs.getInt("RoomNumber");
+				int hotelId= rs.getInt("HotelID");
+				int customerSSN= rs.getInt("Customer");
+				Date endDate = rs.getDate("EndDate");
+				int checkedInByEmployeeSSN = rs.getInt("CheckedInByEmployeeID");
+				int bookingId = rs.getInt("BookingID");
+				Renting renting = new Renting(rentingId, startDate, roomNumber, hotelId, customerSSN, endDate, checkedInByEmployeeSSN, bookingId);
+				
+				rentings.add(renting);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+        	closeDB();
+        }
+					
+		return rentings;
+	}
+	
+	public ArrayList<Renting> getAllActiveRentings(){
+		getConn();
+		
+		ArrayList<Renting> rentings = new ArrayList<Renting>();
+		
+		try {
+			ps = db.prepareStatement("SELECT * FROM renting WHERE NOT Exists(SELECT * from archived WHERE renting.RentingID = archived.rentingID)");
+			rs = ps.executeQuery();
+			while(rs.next()){
+				int rentingId = rs.getInt("RentingID");
+				Date startDate = rs.getDate("StartDate");
+				int roomNumber = rs.getInt("RoomNumber");
+				int hotelId= rs.getInt("HotelID");
+				int customerSSN= rs.getInt("Customer");
+				Date endDate = rs.getDate("EndDate");
+				int checkedInByEmployeeSSN = rs.getInt("CheckedInByEmployeeID");
+				int bookingId = rs.getInt("BookingID");
+				Renting renting = new Renting(rentingId, startDate, roomNumber, hotelId, customerSSN, endDate, checkedInByEmployeeSSN, bookingId);
+				
+				rentings.add(renting);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+        	closeDB();
+        }
+					
+		return rentings;
+	}
+	
+	public ArrayList<Archive> getAllArchived(){
+		getConn();
+		
+		ArrayList<Archive> archives = new ArrayList<Archive>();
+		
+		try {
+			ps = db.prepareStatement("SELECT * FROM Archived");
+			rs = ps.executeQuery();
+			while(rs.next()){
+				int archiveId = rs.getInt("ArchivedID");
+				int bookingId = rs.getInt("BookingID");
+				int rentingId = rs.getInt("RentingID");
+				Archive archive = new Archive(archiveId, bookingId, rentingId);
+				
+				archives.add(archive);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+        	closeDB();
+        }
+					
+		return archives;
+	}
+	
+	public boolean ArchiveRoom(int bookingID, int rentingID) {
+		getConn();
+		
+		try{
+        	
+        	ps = db.prepareStatement("INSERT INTO Archived(BookingID, RentingID) Values("+bookingID+","+rentingID+")");
+        	System.out.println(ps);
+        	ps.execute();
+			
+            
+            return true;
+
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+	
+	public boolean ArchiveRoomBooking(int bookingID) {
+		getConn();
+		
+		try{
+        	
+        	ps = db.prepareStatement("INSERT INTO Archived(BookingID) Values("+bookingID+")");
+        	System.out.println(ps);
+        	ps.execute();
+			
+            
+            return true;
+
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+	public boolean ArchiveRoomRenting(int rentingID) {
+		getConn();
+		
+		try{
+        	
+        	ps = db.prepareStatement("INSERT INTO Archived(RentingID) Values("+rentingID+")");
+        	System.out.println(ps);
+        	ps.execute();
+			
+            
+            return true;
+
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;	 
+        }finally {
+        	closeDB();
+        }
+	}
+	
 }

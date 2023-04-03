@@ -1,6 +1,4 @@
-SELECT room.HotelID, room.RoomNumber, room.Price, room.Capacity, room.View, room.Extentable, roomamenities.Amenetie, roomproblems.Problem FROM ((room 
-INNER JOIN roomamenities ON (room.HotelID = roomamenities.HotelID AND room.RoomNumber = roomamenities.RoomNumber))
-INNER JOIN roomproblems ON (room.HotelID = roomproblems.HotelID AND room.RoomNumber = roomproblems.RoomNumber))
+SELECT room.HotelID, room.RoomNumber, room.Price, room.Capacity, room.View, room.Extentable FROM room
 WHERE NOT EXISTS(
     SELECT Booking.HotelID, Booking.RoomNumber FROM Booking 
     WHERE room.HotelID = Booking.HotelID AND room.RoomNumber = Booking.RoomNumber
