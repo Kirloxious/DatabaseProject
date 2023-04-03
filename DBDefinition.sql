@@ -131,9 +131,9 @@ CREATE TABLE IF NOT EXISTS Renting (
 );
 
 CREATE TABLE IF NOT EXISTS Archived (
-  ArchivedID int NOT NULL,
+  ArchivedID int NOT NULL AUTO_INCREMENT,
   BookingID int,
-  RentingID int NOT NULL,
+  RentingID int,
   PRIMARY KEY (ArchivedID),
   FOREIGN KEY (BookingID) REFERENCES Booking(BookingID),
   FOREIGN KEY (RentingID) REFERENCES Renting(RentingID)

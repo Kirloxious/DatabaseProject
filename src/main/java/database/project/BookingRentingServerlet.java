@@ -1,6 +1,8 @@
 package database.project;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -37,7 +39,18 @@ public class BookingRentingServerlet extends HttpServlet {
 		/* TODO
 		 * get bookings, get rentings and pass to jsp
 		 */
-		request.getRequestDispatcher("employee/bookings-rentings.jsp").forward(request, response);
+		ArrayList<Booking> bookings= new MySQLConnection().getAllActiveBookings();
+		ArrayList<Renting> rentings = new MySQLConnection().getAllActiveRentings();
+		if (bookings != null && rentings != null) {
+			request.setAttribute("ssn", ssn);
+			request.setAttribute("bookings", bookings);
+			request.setAttribute("rentings", rentings);
+			request.getRequestDispatcher("employee/bookings-rentings.jsp").forward(request, response);			
+		} else {
+			response.getWriter().append("Failed to get bookings");
+		}
+		
+		
 	}
 
 	/**
