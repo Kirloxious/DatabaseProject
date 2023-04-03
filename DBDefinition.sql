@@ -21,7 +21,7 @@ Primary Key (HotelChainID, Email)
 
 CREATE TABLE IF NOT EXISTS Hotel(
 HotelChainID int Not Null, 
-NumberOfRooms int Check (NumberOfRooms > 0),
+NumberOfRooms int Check (NumberOfRooms >= 0),
 StarRating int(1) Check (StarRating > 0 AND StarRating < 6),
 Address varchar(200),
 ContactEmail varchar(50),
@@ -140,31 +140,6 @@ CREATE TABLE IF NOT EXISTS Archived (
 );
 
  
-CREATE VIEW HotelRoomCapacities AS 
-SELECT HotelID, RoomNumber, Capacity
-FROM Room; 
- 
- 
-  
-DELIMITER @@
-CREATE TRIGGER hasManagerInsert
-BEFORE INSERT ON hotel
-FOR EACH ROW
-BEGIN
-   IF Not Exists(Select Employee, RoleTitle From Employee, Role where Employee.HotelID = Hotel.HotelID AND RoleTitle like "Manager") THEN
-        signal sqlstate '45000' set message_text = 'Manager must exist';       
-   END IF;
-END @@ 
-DELIMITER ;
 
-DELIMITER @@
-CREATE TRIGGER hasManagerUpdate
-BEFORE UPDATE ON hotel
-FOR EACH ROW
-BEGIN
-   IF Not Exists(Select Employee, RoleTitle From Employee, Role where Employee.HotelID = Hotel.HotelID AND RoleTitle like "Manager") THEN
-        signal sqlstate '45000' set message_text = 'Manager must exist';       
-   END IF;
-END @@ 
-DELIMITER ;
+ 
 
