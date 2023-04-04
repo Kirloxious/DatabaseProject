@@ -1276,6 +1276,7 @@ public class MySQLConnection {
         	closeDB();
         }
 	}
+	
 	public boolean ArchiveRoomRenting(int rentingID) {
 		getConn();
 		
@@ -1285,7 +1286,6 @@ public class MySQLConnection {
         	System.out.println(ps);
         	ps.execute();
 			
-            
             return true;
 
         }catch(SQLException e){
@@ -1294,6 +1294,64 @@ public class MySQLConnection {
         }finally {
         	closeDB();
         }
+	}
+	
+	public ArrayList<RoomView> getHotelRoomCapacitiesView(){
+		getConn();
+		
+		ArrayList<RoomView> roomViews = new ArrayList<RoomView>();
+		
+		try{
+        	
+        	ps = db.prepareStatement("SELECT * FROM HotelRoomCapacities");
+        	System.out.println(ps);
+        	rs = ps.executeQuery();
+        	while(rs.next()) {
+				int hotelId = rs.getInt("HotelID");
+				int roomNumber = rs.getInt("RoomNumber");
+				int capacity = rs.getInt("Capacity");
+				RoomView view = new RoomView(hotelId, roomNumber, capacity);
+				
+				roomViews.add(view);
+			}
+        	
+        }catch(SQLException e){
+            e.printStackTrace();
+            return null;	 
+        }finally {
+        	closeDB();
+        }
+		return roomViews;
+	}
+	
+	public ArrayList<RoomView> getAvailableRoomsByAreaView(){
+		getConn();
+		
+		ArrayList<RoomView> roomViews = new ArrayList<RoomView>();
+		
+		try{
+        	
+        	ps = db.prepareStatement("SELECT * FROM AvailableRoomsPerArea");
+        	System.out.println(ps);
+        	rs = ps.executeQuery();
+        	while(rs.next()) {
+				String area = rs.getString("Area");
+				int hotelChainId = rs.getInt("HotelChainID");
+				int hotelId = rs.getInt("HotelID");
+				int starRating = rs.getInt("StarRating");
+				int numOfRooms = rs.getInt("NumberOfRooms");
+				RoomView view = new RoomView(area, hotelChainId, hotelId, starRating, numOfRooms);
+			
+				roomViews.add(view);
+        	}
+
+        }catch(SQLException e){
+            e.printStackTrace();
+            return null;	 
+        }finally {
+        	closeDB();
+        }
+		return roomViews;
 	}
 	
 }

@@ -35,6 +35,7 @@ public class RoomSearchServerlet extends HttpServlet {
 		
 		//TODO filter
 		ArrayList<Room> rooms = new MySQLConnection().getAllAvailableRooms();
+		
 		if (rooms != null) {
 			request.setAttribute("ssn", ssn);
 			request.setAttribute("rooms", rooms);

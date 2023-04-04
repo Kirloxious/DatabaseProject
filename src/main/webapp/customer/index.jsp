@@ -19,5 +19,8 @@ Hotel Size: <label>Min <input type="text" name="min_hotel_size"></label><label> 
 Price: <label>Min <input type="text" name="min_price"></label><label> Max <input type="text" name="max_price"></label><br>
 <input type="submit" value="Search">
 </form>
+<form action="RoomView">
+<input type="submit" value="Room Views">
+</form>
 </body>
 </html>
