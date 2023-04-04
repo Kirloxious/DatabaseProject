@@ -93,7 +93,7 @@ public class Room {
 	public String toString() {
 		String ameneties = String.join(", ", roomAmeneties);
 		String problems = String.join(", ", roomProblems);
-		return String.format("Hotel ID: %d, Room number: %d, Price: %f, Capacity: %d, View %s, Extendable: %b, Ameneties:(%s), Problems:(%s)", 
+		return String.format("Hotel ID: %d, Room number: %d, Price: %f$, Capacity: %d, View %s, Extendable: %b, Ameneties:(%s), Problems:(%s)", 
 				roomHotelID, roomNumber, roomPrice, roomCapacity, roomView, extentable, ameneties, problems);
 	}
 }

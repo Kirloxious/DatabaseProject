@@ -297,6 +297,7 @@ public class MySQLConnection {
 					+ "        AND NOT EXISTS(SELECT Archived.RentingID FROM Archived WHERE Renting.RentingID = Archived.RentingID)\r\n"
 					+ "    )");
 			rs = ps.executeQuery();
+			ResultSet result = null;
 			while(rs.next()){
 				int roomHotelID = rs.getInt("HotelID");
 				int roomNumber = rs.getInt("RoomNumber");
@@ -306,8 +307,19 @@ public class MySQLConnection {
 				boolean extentable = rs.getBoolean("Extentable");
 				Room room = new Room(roomNumber, roomHotelID, roomPrice, roomCapacity, roomView, extentable);
 				
-				//TODO Need a second query to get amenities and problems
-				
+				ps = db.prepareStatement("SELECT Amenetie FROM roomamenities where HotelID="+roomHotelID+" AND RoomNumber="+roomNumber+"");
+				System.out.println(ps);
+				result = ps.executeQuery();
+				while(result.next()) {
+					String amenetie = result.getString("Amenetie");
+					room.addAmenetie(amenetie);
+				}
+				ps = db.prepareStatement("SELECT Problem FROM roomproblems where HotelID="+roomHotelID+" AND RoomNumber="+roomNumber+"");
+				result = ps.executeQuery();
+				while(result.next()) {
+					String problem = result.getString("Problem");
+					room.addProblem(problem);
+				}
 				Rooms.add(room);
 			}
 		} catch (SQLException e) {
@@ -315,11 +327,14 @@ public class MySQLConnection {
 			return null;
 		} finally {
         	closeDB();
+        	
         }
 					
 		return Rooms;
 
 	}
+	
+	
 	
 	/**
 	 * Creates a booking and inserts in the DB.

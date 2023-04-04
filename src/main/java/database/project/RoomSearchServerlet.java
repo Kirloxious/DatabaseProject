@@ -2,6 +2,9 @@ package database.project;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -33,12 +36,75 @@ public class RoomSearchServerlet extends HttpServlet {
 		String min_price = request.getParameter("min_price");
 		String max_price = request.getParameter("max_price");
 		
+		Predicate<Room> check_min_room_capacity;
+		if(!min_room_capacity.equals("")) {
+			check_min_room_capacity = room -> (room.getRoomCapacity() >= Integer.parseInt(min_room_capacity));
+		}else {
+			check_min_room_capacity = room -> true;
+		}
+		Predicate<Room> check_max_room_capacity;
+		if(!max_room_capacity.equals("")) {
+			check_max_room_capacity = room -> (room.getRoomCapacity() <= Integer.parseInt(max_room_capacity));
+		}else {
+			check_max_room_capacity = room -> true;
+		}
+		Predicate<Room> check_area;
+		if(!area.equals("")) {
+			check_area = room -> true;
+		}else {
+			check_area = room -> true;
+		}
+		Predicate<Room> check_hotel_chain;
+		if(!max_room_capacity.equals("")) {
+			check_max_room_capacity = room -> true;
+		}else {
+			check_max_room_capacity = room -> true;
+		}
+		Predicate<Room> check_stars;
+		if(!max_room_capacity.equals("")) {
+			check_max_room_capacity = room -> (true);
+		}else {
+			check_max_room_capacity = room -> true;
+		}
+		Predicate<Room> check_min_hotel_size;
+		if(!max_room_capacity.equals("")) {
+			check_max_room_capacity = room -> (true);
+		}else {
+			check_max_room_capacity = room -> true;
+		}
+		Predicate<Room> check_max_hotel_size;
+		if(!max_room_capacity.equals("")) {
+			check_max_room_capacity = room -> (true);
+		}else {
+			check_max_room_capacity = room -> true;
+		}
+		Predicate<Room> check_min_price;
+		if(!min_price.equals("")) {
+			check_min_price = room -> (room.getRoomPrice() >= Integer.parseInt(min_price));
+		}else {
+			check_min_price = room -> true;
+		}
+		Predicate<Room> check_max_price;
+		if(!max_price.equals("")) {
+			check_max_price = room -> (room.getRoomPrice() <= Integer.parseInt(max_price));
+		}else {
+			check_max_price = room -> true;
+		}
+		
+		
+		
 		//TODO filter
 		ArrayList<Room> rooms = new MySQLConnection().getAllAvailableRooms();
 		
-		if (rooms != null) {
+		ArrayList<Room> filterResult = (ArrayList<Room>) rooms.stream().filter(check_min_room_capacity
+																		.and(check_max_room_capacity)
+																		.and(check_max_price)
+																		.and(check_min_price))
+																		.collect(Collectors.toList());
+		
+		if (filterResult != null) {
 			request.setAttribute("ssn", ssn);
-			request.setAttribute("rooms", rooms);
+			request.setAttribute("rooms", filterResult);
 			request.setAttribute("start_date", start_date);
 			request.setAttribute("end_date", end_date);
 			request.getRequestDispatcher("customer/room-results.jsp").forward(request, response);
