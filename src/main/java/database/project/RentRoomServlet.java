@@ -27,7 +27,13 @@ public class RentRoomServlet extends HttpServlet {
 		String end_date = request.getParameter("end_date");
 		String bookingID = request.getParameter("bookingID");
 
-		boolean success = new MySQLConnection().rentRoom(Integer.parseInt(custSSN), Integer.parseInt(room_number), Integer.parseInt(hotel_id), start_date, end_date, Integer.parseInt(bookingID), Integer.parseInt(employeeSSN));
+		
+		boolean success;
+		if(bookingID != null) {
+			success = new MySQLConnection().rentRoom(Integer.parseInt(custSSN), Integer.parseInt(room_number), Integer.parseInt(hotel_id), start_date, end_date, Integer.parseInt(bookingID), Integer.parseInt(employeeSSN));	
+		}else {
+			success = new MySQLConnection().rentRoom(Integer.parseInt(custSSN), Integer.parseInt(room_number), Integer.parseInt(hotel_id), start_date, end_date, Integer.parseInt(employeeSSN));	
+		}
 		
 		if (success) {
 			response.getWriter().append("Renting made.");

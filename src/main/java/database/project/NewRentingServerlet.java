@@ -1,6 +1,8 @@
 package database.project;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,8 +22,16 @@ public class NewRentingServerlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String ssn = request.getParameter("ssn");
 		
-		request.setAttribute("ssn", ssn);
-		request.getRequestDispatcher("employee/new-renting.jsp").forward(request, response);
+		ArrayList<Room> rooms = new MySQLConnection().getAllAvailableRooms();
+		
+		if(rooms != null) {
+			request.setAttribute("employeeSSN", ssn);
+			request.setAttribute("rooms", rooms);
+			request.getRequestDispatcher("employee/new-renting.jsp").forward(request, response);			
+		}
+		else {
+			response.getWriter().append("Failed to get rooms");
+		}
 	}
 
 	/**
