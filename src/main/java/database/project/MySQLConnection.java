@@ -322,6 +322,7 @@ public class MySQLConnection {
 				}
 				Rooms.add(room);
 			}
+			result.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
