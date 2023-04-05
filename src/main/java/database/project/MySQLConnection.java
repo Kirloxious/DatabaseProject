@@ -1134,13 +1134,23 @@ public class MySQLConnection {
 		return bookings;
 	}
 	
-	public ArrayList<Booking> getAllActiveBookings(){
+	public ArrayList<Booking> getAllActiveBookings(ArrayList<String> conds){
+		String where; 
+		if (conds.size() > 0) {
+			where = "WHERE " + String.join(" AND ", conds);
+		} else {
+			where = "";
+		}
+		
 		getConn();
 		
 		ArrayList<Booking> bookings = new ArrayList<Booking>();
 		
 		try {
-			ps = db.prepareStatement("SELECT * FROM Booking WHERE NOT Exists(SELECT * from archived WHERE booking.BookingID = archived.BookingID)");
+			ps = db.prepareStatement("SELECT * FROM Booking AS b INNER "
+					+ "JOIN Room AS r ON r.HotelID=b.HotelID AND r.RoomNumber=b.RoomNumber "
+					+ "INNER JOIN Hotel AS h ON h.HotelID=r.HotelID "
+					+ where);
 			rs = ps.executeQuery();
 			while(rs.next()){
 				int bookingId = rs.getInt("BookingID");
@@ -1196,13 +1206,22 @@ public class MySQLConnection {
 		return rentings;
 	}
 	
-	public ArrayList<Renting> getAllActiveRentings(){
+	public ArrayList<Renting> getAllActiveRentings(ArrayList<String> conds){
+		String where; 
+		if (conds.size() > 0) {
+			where = "WHERE " + String.join(" AND ", conds);
+		} else {
+			where = "";
+		}
 		getConn();
 		
 		ArrayList<Renting> rentings = new ArrayList<Renting>();
 		
 		try {
-			ps = db.prepareStatement("SELECT * FROM renting WHERE NOT Exists(SELECT * from archived WHERE renting.RentingID = archived.rentingID)");
+			ps = db.prepareStatement("SELECT * FROM renting AS b INNER "
+					+ "JOIN Room AS r ON r.HotelID=b.HotelID AND r.RoomNumber=b.RoomNumber "
+					+ "INNER JOIN Hotel AS h ON h.HotelID=r.HotelID "
+					+ where);
 			rs = ps.executeQuery();
 			while(rs.next()){
 				int rentingId = rs.getInt("RentingID");
