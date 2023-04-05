@@ -279,23 +279,36 @@ public class MySQLConnection {
 	/**
 	 * Returns all the rooms which do not have a booking or renting currently.
 	 * */
-	public ArrayList<Room> getAllAvailableRooms(){ //TODO redo
+	public ArrayList<Room> getAllAvailableRooms(ArrayList<String> conds, String start_date, String end_date){
+		String where;
+		if (conds.size() > 0) {
+			where = "AND " + String.join(" AND ", conds);
+		} else {
+			where = "";
+		}
 		getConn();
 		
 		ArrayList<Room> Rooms = new ArrayList<Room>();
 		
 		try {
-			ps = db.prepareStatement("SELECT room.HotelID, room.RoomNumber, room.Price, room.Capacity, room.View, room.Extentable FROM room\r\n"
-					+ "WHERE NOT EXISTS(\r\n"
-					+ "    SELECT Booking.HotelID, Booking.RoomNumber FROM Booking \r\n"
-					+ "    WHERE room.HotelID = Booking.HotelID AND room.RoomNumber = Booking.RoomNumber\r\n"
-					+ "    AND NOT EXISTS(SELECT Archived.BookingID FROM Archived WHERE Booking.BookingID = Archived.BookingID)\r\n"
-					+ "    ) AND\r\n"
-					+ "    NOT EXISTS(\r\n"
-					+ "        SELECT Renting.HotelID, Renting.RoomNumber FROM Renting \r\n"
-					+ "        WHERE room.HotelID = Renting.HotelID AND room.RoomNumber = Renting.RoomNumber\r\n"
-					+ "        AND NOT EXISTS(SELECT Archived.RentingID FROM Archived WHERE Renting.RentingID = Archived.RentingID)\r\n"
-					+ "    )");
+			ps = db.prepareStatement("SELECT r.HotelID, r.RoomNumber, r.Price, r.Capacity, r.View, r.Extentable FROM room AS r "
+					+ "INNER JOIN Hotel AS h ON r.HotelID=h.HotelID "
+					+ "WHERE NOT EXISTS("
+					+ "    SELECT Booking.HotelID, Booking.RoomNumber FROM Booking "
+					+ "    WHERE r.HotelID = Booking.HotelID AND r.RoomNumber = Booking.RoomNumber "
+					+ "    AND Booking.StartDate<? AND ?<Booking.EndDate "
+					+ "    AND NOT EXISTS(SELECT Archived.BookingID FROM Archived WHERE Booking.BookingID = Archived.BookingID) "
+					+ "    ) AND "
+					+ "    NOT EXISTS( "
+					+ "        SELECT Renting.HotelID, Renting.RoomNumber FROM Renting "
+					+ "        WHERE r.HotelID = Renting.HotelID AND r.RoomNumber = Renting.RoomNumber "
+					+ "        AND Renting.StartDate<? AND ?<Renting.EndDate"
+					+ "        AND NOT EXISTS(SELECT Archived.RentingID FROM Archived WHERE Renting.RentingID = Archived.RentingID)"
+					+ "    ) " + where);
+			ps.setString(1, end_date);
+			ps.setString(2, start_date);
+			ps.setString(3, end_date);
+			ps.setString(4, start_date);
 			rs = ps.executeQuery();
 			ResultSet result = null;
 			while(rs.next()){
@@ -322,7 +335,8 @@ public class MySQLConnection {
 				}
 				Rooms.add(room);
 			}
-			result.close();
+			if (result != null)
+				result.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
