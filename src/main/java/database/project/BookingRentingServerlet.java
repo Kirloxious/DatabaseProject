@@ -36,11 +36,43 @@ public class BookingRentingServerlet extends HttpServlet {
 		String min_price = request.getParameter("min_price");
 		String max_price = request.getParameter("max_price");
 		
+		ArrayList<String> c = new ArrayList<>();
+		if (!booking_id.equals("")) c.add("b.BookingID="+booking_id);
+		if (include_achived == null) c.add("NOT EXISTS(SELECT * FROM archived WHERE b.BookingID = archived.BookingID)");
+		
+		if (!start_date.equals("")) c.add("b.StartDate='"+start_date+"'");
+		if (!end_date.equals("")) c.add("b.EndDate='"+end_date+"'");
+		if (!min_room_capacity.equals("")) c.add("r.Capacity>=" + min_room_capacity);
+		if (!max_room_capacity.equals("")) c.add("r.Capacity<=" + max_room_capacity);
+		if (!area.equals("")) c.add("h.Address LIKE '%"+area+"%'");
+		if (!hotel_chain.equals("")) c.add("h.HotelChainID="+hotel_chain);
+		if (!stars.equals("")) c.add("h.StarRating="+stars);
+		if (!min_hotel_size.equals("")) c.add("h.NumberOfRooms>="+min_hotel_size);
+		if (!max_hotel_size.equals("")) c.add("h.NumberOfRooms<="+max_hotel_size);
+		if (!min_price.equals("")) c.add("r.Price>="+min_price);
+		if (!max_price.equals("")) c.add("r.Price<="+max_price);
+		
 		/* TODO
 		 * get bookings, get rentings and pass to jsp
 		 */
-		ArrayList<Booking> bookings= new MySQLConnection().getAllActiveBookings();
-		ArrayList<Renting> rentings = new MySQLConnection().getAllActiveRentings();
+		ArrayList<Booking> bookings= new MySQLConnection().getAllActiveBookings(c);
+		
+		c = new ArrayList<>();
+		if (!renting_id.equals("")) c.add("b.RentingID="+renting_id);
+		if (include_achived == null) c.add("NOT EXISTS(SELECT * FROM archived WHERE b.RentingID = archived.RentingID)");
+		if (!start_date.equals("")) c.add("b.StartDate='"+start_date+"'");
+		if (!end_date.equals("")) c.add("b.EndDate='"+end_date+"'");
+		if (!min_room_capacity.equals("")) c.add("r.Capacity>=" + min_room_capacity);
+		if (!max_room_capacity.equals("")) c.add("r.Capacity<=" + max_room_capacity);
+		if (!area.equals("")) c.add("h.Address LIKE '%"+area+"%'");
+		if (!hotel_chain.equals("")) c.add("h.HotelChainID="+hotel_chain);
+		if (!stars.equals("")) c.add("h.StarRating="+stars);
+		if (!min_hotel_size.equals("")) c.add("h.NumberOfRooms>="+min_hotel_size);
+		if (!max_hotel_size.equals("")) c.add("h.NumberOfRooms<="+max_hotel_size);
+		if (!min_price.equals("")) c.add("r.Price>="+min_price);
+		if (!max_price.equals("")) c.add("r.Price<="+max_price);
+
+		ArrayList<Renting> rentings = new MySQLConnection().getAllActiveRentings(c);
 		if (bookings != null && rentings != null) {
 			request.setAttribute("ssn", ssn);
 			request.setAttribute("bookings", bookings);
