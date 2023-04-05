@@ -22,7 +22,7 @@ public class NewRentingServerlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String ssn = request.getParameter("ssn");
 		
-		ArrayList<Room> rooms = new MySQLConnection().getAllAvailableRooms();
+		ArrayList<Room> rooms = new MySQLConnection().getAllAvailableRooms(new ArrayList<String>(), null, null);
 		
 		if(rooms != null) {
 			request.setAttribute("employeeSSN", ssn);

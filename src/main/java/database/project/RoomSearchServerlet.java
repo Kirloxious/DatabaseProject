@@ -36,75 +36,24 @@ public class RoomSearchServerlet extends HttpServlet {
 		String min_price = request.getParameter("min_price");
 		String max_price = request.getParameter("max_price");
 		
-		Predicate<Room> check_min_room_capacity;
-		if(!min_room_capacity.equals("")) {
-			check_min_room_capacity = room -> (room.getRoomCapacity() >= Integer.parseInt(min_room_capacity));
-		}else {
-			check_min_room_capacity = room -> true;
-		}
-		Predicate<Room> check_max_room_capacity;
-		if(!max_room_capacity.equals("")) {
-			check_max_room_capacity = room -> (room.getRoomCapacity() <= Integer.parseInt(max_room_capacity));
-		}else {
-			check_max_room_capacity = room -> true;
-		}
-		Predicate<Room> check_area;
-		if(!area.equals("")) {
-			check_area = room -> true;
-		}else {
-			check_area = room -> true;
-		}
-		Predicate<Room> check_hotel_chain;
-		if(!max_room_capacity.equals("")) {
-			check_max_room_capacity = room -> true;
-		}else {
-			check_max_room_capacity = room -> true;
-		}
-		Predicate<Room> check_stars;
-		if(!max_room_capacity.equals("")) {
-			check_max_room_capacity = room -> (true);
-		}else {
-			check_max_room_capacity = room -> true;
-		}
-		Predicate<Room> check_min_hotel_size;
-		if(!max_room_capacity.equals("")) {
-			check_max_room_capacity = room -> (true);
-		}else {
-			check_max_room_capacity = room -> true;
-		}
-		Predicate<Room> check_max_hotel_size;
-		if(!max_room_capacity.equals("")) {
-			check_max_room_capacity = room -> (true);
-		}else {
-			check_max_room_capacity = room -> true;
-		}
-		Predicate<Room> check_min_price;
-		if(!min_price.equals("")) {
-			check_min_price = room -> (room.getRoomPrice() >= Integer.parseInt(min_price));
-		}else {
-			check_min_price = room -> true;
-		}
-		Predicate<Room> check_max_price;
-		if(!max_price.equals("")) {
-			check_max_price = room -> (room.getRoomPrice() <= Integer.parseInt(max_price));
-		}else {
-			check_max_price = room -> true;
-		}
+		ArrayList<String> c = new ArrayList<>();
 		
+		if (!min_room_capacity.equals("")) c.add("r.Capacity>=" + min_room_capacity);
+		if (!max_room_capacity.equals("")) c.add("r.Capacity<=" + max_room_capacity);
+		if (!area.equals("")) c.add("h.Address LIKE '%"+area+"%'");
+		if (!hotel_chain.equals("")) c.add("h.HotelChainID="+hotel_chain);
+		if (!stars.equals("")) c.add("h.StarRating="+stars);
+		if (!min_hotel_size.equals("")) c.add("h.NumberOfRooms>="+min_hotel_size);
+		if (!max_hotel_size.equals("")) c.add("h.NumberOfRooms<="+max_hotel_size);
+		if (!min_price.equals("")) c.add("r.Price>="+min_price);
+		if (!max_price.equals("")) c.add("r.Price<="+max_price);
 		
+		ArrayList<Room> rooms = new MySQLConnection().getAllAvailableRooms(c, start_date, end_date);
 		
-		//TODO filter
-		ArrayList<Room> rooms = new MySQLConnection().getAllAvailableRooms();
-		
-		ArrayList<Room> filterResult = (ArrayList<Room>) rooms.stream().filter(check_min_room_capacity
-																		.and(check_max_room_capacity)
-																		.and(check_max_price)
-																		.and(check_min_price))
-																		.collect(Collectors.toList());
-		
-		if (filterResult != null) {
+	
+		if (rooms != null) {
 			request.setAttribute("ssn", ssn);
-			request.setAttribute("rooms", filterResult);
+			request.setAttribute("rooms", rooms);
 			request.setAttribute("start_date", start_date);
 			request.setAttribute("end_date", end_date);
 			request.getRequestDispatcher("customer/room-results.jsp").forward(request, response);
