@@ -26,7 +26,6 @@ Price: <label>Min <input type="text" name="min_price"></label><label> Max <input
 <h1>Create Renting without Booking</h1>
 <form action="NewRenting" method="get">
 <input type="hidden" name="ssn" value="<%out.print(request.getAttribute("ssn"));%>">
-TODO Need options for hotel and dates
 <input type="submit" value="Create Renting">
 </form>
 <hr>

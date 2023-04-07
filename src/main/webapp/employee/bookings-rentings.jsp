@@ -43,7 +43,9 @@ ArrayList<Renting> rentings = (ArrayList<Renting>)request.getAttribute("rentings
 for (Renting renting: rentings) {%> 
 	<form method="get" action="ArchiveRoom">
 	<input type="hidden" name="rentingID" value="<%out.print(renting.getRentingID());%>">
+	<% if (renting.getBookingID() != null) {%>
 	<input type="hidden" name="bookingID" value="<%out.print(renting.getBookingID());%>">
+	<%}%>
 <%
 	out.println(rentings.toString());
 %> 

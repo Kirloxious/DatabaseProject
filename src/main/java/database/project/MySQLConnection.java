@@ -1245,7 +1245,10 @@ public class MySQLConnection {
 				int customerSSN= rs.getInt("Customer");
 				Date endDate = rs.getDate("EndDate");
 				int checkedInByEmployeeSSN = rs.getInt("CheckedInByEmployeeID");
-				int bookingId = rs.getInt("BookingID");
+				Integer bookingId = rs.getInt("BookingID");
+				if (rs.wasNull()) {
+					bookingId = null;
+			    }
 				Renting renting = new Renting(rentingId, startDate, roomNumber, hotelId, customerSSN, endDate, checkedInByEmployeeSSN, bookingId);
 				
 				rentings.add(renting);

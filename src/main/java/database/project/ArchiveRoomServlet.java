@@ -23,7 +23,7 @@ public class ArchiveRoomServlet extends HttpServlet {
 		String rentingID = request.getParameter("rentingID");
 		boolean success;
 		//only archive renting
-		if(bookingID.equals("nil")) {
+		if(bookingID == null) {
 			success = new MySQLConnection().ArchiveRoomRenting(Integer.parseInt(rentingID));
 		}
 		//only archive booking
